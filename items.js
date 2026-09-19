@@ -1,5 +1,5 @@
 // =========================================================
-// 1. EXAM ENGINE & STATE MANAGEMENT (SEQUENTIAL SUB-TOPICS)
+// 1. EXAM ENGINE & STATE MANAGEMENT (STRICT SEQUENTIAL)
 // =========================================================
 
 let currentExam = [];
@@ -8,7 +8,7 @@ let userAnswers = {};
 let totalSeconds = 3 * 60 * 60;
 let timerInterval = null;
 
-// Helper function to shuffle an array (Fisher-Yates Shuffle)
+// Fisher-Yates Shuffle
 function shuffleArray(arr) {
     let array = [...arr];
     for (let i = array.length - 1; i > 0; i--) {
@@ -18,14 +18,23 @@ function shuffleArray(arr) {
     return array;
 }
 
-// Function to select and shuffle items strictly within a sub-topic WITHOUT shuffling the final list
+/**
+ * Retrieves 'count' questions belonging strictly to 'subtopicName'.
+ * Shuffles the selected questions AND their options internally, 
+ * but preserves the block order when returned.
+ */
 function getSubtopicQuestions(pool, subtopicName, count) {
-    const filtered = pool.filter(q => q.subtopic === subtopicName);
-    
-    // 1. Pick 'count' random questions from the subtopic pool
+    // Exact match filter
+    const filtered = pool.filter(q => q.subtopic && q.subtopic.trim() === subtopicName.trim());
+
+    if (filtered.length < count) {
+        console.warn(`[Warning] Subtopic "${subtopicName}" requested ${count} items, but only found ${filtered.length} in pool.`);
+    }
+
+    // 1. Randomly sample 'count' questions from this sub-topic pool
     const selectedQuestions = shuffleArray(filtered).slice(0, count);
 
-    // 2. Return them in sequence with shuffled options, preserving their order
+    // 2. Shuffle options for each selected question without altering question order
     return selectedQuestions.map(q => {
         const correctAnswerText = q.options[q.correct];
         const shuffledOptions = shuffleArray(q.options);
@@ -39,15 +48,22 @@ function getSubtopicQuestions(pool, subtopicName, count) {
     });
 }
 
-// Generates the 150-question exam in exact sub-topic sequence
+// Generates the 150-question exam in EXACT sub-topic order
 function generate150QuestionExam() {
     let examPool = [];
 
+    // ---------------------------------------------------------
     // 1. NUMERICAL ABILITY (42 Items Total)
+    // Items 1 to 25: Word Problems and Operations
+    // Items 26 to 42: Data Sufficiency
+    // ---------------------------------------------------------
     examPool.push(...getSubtopicQuestions(numericalPool, "Word Problems and Operations", 25));
     examPool.push(...getSubtopicQuestions(numericalPool, "Data Sufficiency", 17));
 
+    // ---------------------------------------------------------
     // 2. VERBAL ABILITY (55 Items Total)
+    // Items 43 to 97
+    // ---------------------------------------------------------
     examPool.push(...getSubtopicQuestions(verbalPool, "Alphabetizing", 5));
     examPool.push(...getSubtopicQuestions(verbalPool, "Synonyms", 5));
     examPool.push(...getSubtopicQuestions(verbalPool, "Antonyms", 5));
@@ -56,17 +72,25 @@ function generate150QuestionExam() {
     examPool.push(...getSubtopicQuestions(verbalPool, "Identifying Errors", 5));
     examPool.push(...getSubtopicQuestions(verbalPool, "Paragraph Development", 5));
     examPool.push(...getSubtopicQuestions(verbalPool, "Reading Comprehension", 5));
+    
+    // Filipino Sub-Topics
     examPool.push(...getSubtopicQuestions(verbalPool, "Kasingkahulugan", 3));
     examPool.push(...getSubtopicQuestions(verbalPool, "Kasalungat", 3));
     examPool.push(...getSubtopicQuestions(verbalPool, "Mga Kawikaan", 3));
     examPool.push(...getSubtopicQuestions(verbalPool, "Wastong Gamit", 3));
     examPool.push(...getSubtopicQuestions(verbalPool, "Pagkilala sa Mali", 3));
 
+    // ---------------------------------------------------------
     // 3. ANALYTICAL ABILITY (35 Items Total)
+    // Items 98 to 132
+    // ---------------------------------------------------------
     examPool.push(...getSubtopicQuestions(analyticalPool, "Inductive Reasoning", 20));
     examPool.push(...getSubtopicQuestions(analyticalPool, "Abstract Reasoning", 15));
 
+    // ---------------------------------------------------------
     // 4. GENERAL INFORMATION (18 Items Total)
+    // Items 133 to 150
+    // ---------------------------------------------------------
     examPool.push(...getSubtopicQuestions(generalInfoPool, "Philippine Constitution", 18));
 
     return examPool;
