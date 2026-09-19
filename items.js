@@ -18,7 +18,6 @@ function shuffleArray(arr) {
     return array;
 }
 
-// Function to select and shuffle items strictly within a sub-topic
 // Function to select and shuffle items strictly within a sub-topic WITHOUT shuffling the final list
 function getSubtopicQuestions(pool, subtopicName, count) {
     const filtered = pool.filter(q => q.subtopic === subtopicName);
@@ -80,6 +79,8 @@ function generate150QuestionExam() {
 function renderCurrentQuestion() {
     const q = currentExam[currentIndex];
     const total = currentExam.length;
+
+    if (!q) return;
 
     document.getElementById("q-counter-text").innerText = `Question ${currentIndex + 1} of ${total}`;
     const progressPercent = ((currentIndex + 1) / total) * 100;
@@ -305,7 +306,9 @@ window.onload = function() {
     currentExam = generate150QuestionExam();
     renderCurrentQuestion();
     startTimer();
-};		// ==========================================
+};
+
+// ==========================================
         // 1. QUESTION POOLS
         // ==========================================
 
@@ -2055,8 +2058,7 @@ window.onload = function() {
                 subtopic: "Antonyms",
                 sidebarId: "side-eng-ant",
                 directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
-                question: "The author's writing style was <b><i>verbose</i></b>, using far more words than necessary to explain simple ideas.
-",
+                question: "The author's writing style was <b><i>verbose</i></b>, using far more words than necessary to explain simple ideas.",
                 options: ["wordy", "elaborate", "concise", "lengthy"],
                 correct: 2
             },
