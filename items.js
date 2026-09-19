@@ -1590,6 +1590,169 @@
                 options: ["uncertain", "preliminary", "definitive", "provisional"],
                 correct: 2
             },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The once-busy harbor became <b><i>desolate</i></b> after the shipping industry moved to another region.",
+                options: ["deserted", "barren", "crowded", "abandoned"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The speaker remained <b><i>composed</i></b> despite the unexpected interruption during the presentation.",
+                options: ["calm", "collected", "agitated", "controlled"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The instructions were deliberately <b><i>concise</i></b> so that travelers could quickly understand what to do during an emergency.",
+                options: ["brief", "lengthy", "precise", "straightforward"],
+                correct: 1
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The author's argument was <b><i>compelling</i></b>, persuading many readers to reconsider their assumptions.",
+                options: ["convincing", "persuasive", "unconvincing", "powerful"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The region's <b><i>prosperous</i></b> economy attracted thousands of people seeking employment and better opportunities.",
+                options: ["thriving", "wealthy", "impoverished", "successful"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The child's <b><i>innocent</i></b> question unintentionally revealed something the adults had been trying to keep secret.",
+                options: ["harmless", "sincere", "guilty", "naive"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The old theater was once <b><i>magnificent</i></b>, but years of neglect had left the building in poor condition.",
+                options: ["splendid", "impressive", "ordinary", "grand"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The instructions were <b><i>mandatory</i></b> for all participants, with no exceptions permitted.",
+                options: ["compulsary", "required", "voluntary", "obligatory"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The river became <b><i>shallow</i></b> as it approached the dry season, exposing rocks that were normally underwater.",
+                options: ["narrow", "deep", "muddy", "calm"],
+                correct: 1
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The explorer was <b><i>cautious</i></b> when crossing the unstable bridge, carefully testing each step before moving forward.",
+                options: ["careful", "reckless", "hesitant", "attentive"],
+                correct: 1
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The professor considered the student's explanation <b><i>plausible</i></b>, although more evidence was needed before accepting it as fact.",
+                options: ["reasonable", "credible", "impossible", "believable"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The ancient civilization was known for its <b><i>elaborate</i></b> ceremonies, which involved intricate costumes, music, and rituals.",
+                options: ["complicated", "detailed", "simple", "ornate"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The weather forecast predicted <b><i>sporadic</i></b> rainfall throughout the afternoon, with showers occurring at irregular intervals.",
+                options: ["occasional", "intermittent", "continuous", "irregular"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The documentary presented a <b><i>biased</i></b> account of the historical event, giving attention to only one side of the controversy.",
+                options: ["prejudiced", "one-sided", "impartial", "subjective"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The instructions were <b><i>obsolete</i></b> because the software had been completely redesigned several years earlier.",
+                options: ["outdated", "irrelevant", "current", "antiquated"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The athlete's performance was <b><i>exceptional</i></b>, surpassing the previous record by several seconds.",
+                options: ["remarkable", "extraordinary", "ordinary", "outstanding"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The town's water supply became <b><i>scarce</i></b> after months of drought.",
+                options: ["limited", "insufficient", "plentiful", "inadequate"],
+                correct: 2
+            },
+			{
+                subject: "English",
+                subtopic: "Antonyms",
+                sidebarId: "side-eng-ant",
+                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
+                question: "The author's writing style was <b><i>verbose</i></b>, using far more words than necessary to explain simple ideas.
+",
+                options: ["wordy", "elaborate", "concise", "lengthy"],
+                correct: 2
+            },
             {
                 subject: "Filipino",
                 subtopic: "Wastong Gamit",
