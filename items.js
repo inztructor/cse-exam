@@ -19,11 +19,15 @@ function shuffleArray(arr) {
 }
 
 // Function to select and shuffle items strictly within a sub-topic
+// Function to select and shuffle items strictly within a sub-topic WITHOUT shuffling the final list
 function getSubtopicQuestions(pool, subtopicName, count) {
     const filtered = pool.filter(q => q.subtopic === subtopicName);
-    const randomizedQuestions = shuffleArray(filtered).slice(0, count);
+    
+    // 1. Pick 'count' random questions from the subtopic pool
+    const selectedQuestions = shuffleArray(filtered).slice(0, count);
 
-    return randomizedQuestions.map(q => {
+    // 2. Return them in sequence with shuffled options, preserving their order
+    return selectedQuestions.map(q => {
         const correctAnswerText = q.options[q.correct];
         const shuffledOptions = shuffleArray(q.options);
         const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
