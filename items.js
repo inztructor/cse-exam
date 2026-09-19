@@ -327,7 +327,7 @@ window.onload = function() {
                 subtopic: "Word Problems and Operations",
                 sidebarId: "side-math-word",
                 directions: "Directions: Analyze and solve each problem carefully. Choose the correct answer.",
-                question: "Evaluate: {20 - (30 - 10) + 1 5 × 6 - 5}",
+                question: "Evaluate: {20 - (30 - 10) + 15 × 6 - 5}",
                 options: ["65", "75", "85", "105"],
                 correct: 2
 			},
@@ -355,7 +355,7 @@ window.onload = function() {
                 sidebarId: "side-math-word",
                 directions: "Directions: Analyze and solve each problem carefully. Choose the correct answer.",
                 question: "Find the sum: 199 + 845 + 298 + 102",
-                options: ["1,344", "1,444", "1,544", "1,442"],
+                options: ["1344", "1444", "1544", "1442"],
                 correct: 1
 			},
 			{
@@ -1248,24 +1248,6 @@ window.onload = function() {
                 subtopic: "Alphabetizing",
                 sidebarId: "side-eng-alpha",
                 directions: "Arrange each group of items in alphabetical order.",
-                question: "<ol type='A'><li>Department of Education</li><li>Department of Agriculture</li><li>Department of Finance</li><li>Department of Energy</li></ol>",
-                options: ["ABCD", "BACD", "BADC", "BDCA"],
-                correct: 1
-            },
-			{
-                subject: "English",
-                subtopic: "Alphabetizing",
-                sidebarId: "side-eng-alpha",
-                directions: "Arrange each group of items in alphabetical order.",
-                question: "<ol type='A'><li>Santos, Maria</li><li>Santos, M. Anne</li><li>Santos, Maria B.</li><li>Santos, Maribel</li></ol>",
-                options: ["BACD", "BCAD", "ABCD", "BADC"],
-                correct: 0
-            },
-			{
-                subject: "English",
-                subtopic: "Alphabetizing",
-                sidebarId: "side-eng-alpha",
-                directions: "Arrange each group of items in alphabetical order.",
                 question: "<ol type='A'><li>Globe Telecom</li><li>Google Philippines</li><li>Grab Philippines</li><li>GMA Network</li></ol>",
                 options: ["DABC", "ADBC", "DBAC", "BACD"],
                 correct: 0
@@ -1725,15 +1707,6 @@ window.onload = function() {
                 subtopic: "Antonyms",
                 sidebarId: "side-eng-ant",
                 directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
-                question: "The instructions were <b><i>tedious</i></b>, requiring the students to repeat the same procedure several times.",
-                options: ["boring", "repetitive", "engaging", "monotonous"],
-                correct: 2
-            },
-			{
-                subject: "English",
-                subtopic: "Antonyms",
-                sidebarId: "side-eng-ant",
-                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
                 question: "The mountain trail became <b><i>treacherous</i></b> after heavy rain made the rocks extremely slippery.",
                 options: ["dangerous", "hazardous", "safe", "difficult"],
                 correct: 2
@@ -1880,24 +1853,6 @@ window.onload = function() {
                 directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
                 question: "The festival was <b><i>chaotic</i></b>, with thousands of people moving through the narrow streets at the same time.",
                 options: ["disorderly", "confused", "orderly", "turbulent"],
-                correct: 2
-            },
-			{
-                subject: "English",
-                subtopic: "Antonyms",
-                sidebarId: "side-eng-ant",
-                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
-                question: "The novelist's description of the countryside was remarkably <b><i>vivid</i></b>, allowing readers to imagine every detail of the landscape.",
-                options: ["colorful", "dull", "detailed", "expressive"],
-                correct: 1
-            },
-			{
-                subject: "English",
-                subtopic: "Antonyms",
-                sidebarId: "side-eng-ant",
-                directions: "Choose the correct answer that corresponds to the word opposite in meaning to the bold and italicized word or phrase in the sentence.",
-                question: "The scientist's conclusion was <b><i>tentative</i></b> because several experiments were still needed to verify the results.",
-                options: ["uncertain", "preliminary", "definitive", "provisional"],
                 correct: 2
             },
 			{
