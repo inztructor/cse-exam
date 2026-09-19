@@ -1,4 +1,307 @@
-        // ==========================================
+// =========================================================
+// 1. EXAM ENGINE & STATE MANAGEMENT (SEQUENTIAL SUB-TOPICS)
+// =========================================================
+
+let currentExam = [];
+let currentIndex = 0;
+let userAnswers = {};
+let totalSeconds = 3 * 60 * 60;
+let timerInterval = null;
+
+// Helper function to shuffle an array (Fisher-Yates Shuffle)
+function shuffleArray(arr) {
+    let array = [...arr];
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// Function to select and shuffle items strictly within a sub-topic
+function getSubtopicQuestions(pool, subtopicName, count) {
+    const filtered = pool.filter(q => q.subtopic === subtopicName);
+    const randomizedQuestions = shuffleArray(filtered).slice(0, count);
+
+    return randomizedQuestions.map(q => {
+        const correctAnswerText = q.options[q.correct];
+        const shuffledOptions = shuffleArray(q.options);
+        const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+
+        return {
+            ...q,
+            options: shuffledOptions,
+            correct: newCorrectIndex
+        };
+    });
+}
+
+// Generates the 150-question exam in exact sub-topic sequence
+function generate150QuestionExam() {
+    let examPool = [];
+
+    // 1. NUMERICAL ABILITY (42 Items Total)
+    examPool.push(...getSubtopicQuestions(numericalPool, "Word Problems and Operations", 25));
+    examPool.push(...getSubtopicQuestions(numericalPool, "Data Sufficiency", 17));
+
+    // 2. VERBAL ABILITY (55 Items Total)
+    examPool.push(...getSubtopicQuestions(verbalPool, "Alphabetizing", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Synonyms", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Antonyms", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Single-Word Analogy", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Double-Word Analogy", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Identifying Errors", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Paragraph Development", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Reading Comprehension", 5));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Kasingkahulugan", 3));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Kasalungat", 3));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Mga Kawikaan", 3));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Wastong Gamit", 3));
+    examPool.push(...getSubtopicQuestions(verbalPool, "Pagkilala sa Mali", 3));
+
+    // 3. ANALYTICAL ABILITY (35 Items Total)
+    examPool.push(...getSubtopicQuestions(analyticalPool, "Inductive Reasoning", 20));
+    examPool.push(...getSubtopicQuestions(analyticalPool, "Abstract Reasoning", 15));
+
+    // 4. GENERAL INFORMATION (18 Items Total)
+    examPool.push(...getSubtopicQuestions(generalInfoPool, "Philippine Constitution", 18));
+
+    return examPool;
+}
+
+// =========================================================
+// 2. RENDERING & UI FUNCTIONS
+// =========================================================
+
+function renderCurrentQuestion() {
+    const q = currentExam[currentIndex];
+    const total = currentExam.length;
+
+    document.getElementById("q-counter-text").innerText = `Question ${currentIndex + 1} of ${total}`;
+    const progressPercent = ((currentIndex + 1) / total) * 100;
+    document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+
+    document.getElementById("topic-badge-text").innerText = `${q.subject} — ${q.subtopic}`;
+    document.getElementById("direction-text").innerText = q.directions;
+    
+    let questionContent = `${currentIndex + 1}. ${q.question}`;
+    if (q.image) {
+        questionContent += `
+            <div style="text-align:center; margin-top:15px;">
+                <img src="${q.image}" alt="Question Figure" style="max-width:100%; max-height:300px; border-radius:8px; border:1px solid #cbd5e0; display:block; margin:0 auto;">
+            </div>
+        `;
+    }
+    document.getElementById("question-text").innerHTML = questionContent;
+
+    const optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((optText, oIdx) => {
+        const isSelected = userAnswers[currentIndex] === oIdx;
+        const letterPrefix = String.fromCharCode(65 + oIdx);
+        const optionLabel = document.createElement("label");
+        optionLabel.className = `option-card ${isSelected ? 'selected' : ''}`;
+        
+        optionLabel.innerHTML = `
+            <input type="radio" name="option_choice" value="${oIdx}" ${isSelected ? 'checked' : ''} onchange="selectOption(${oIdx})">
+            <span class="option-text"><strong>${letterPrefix}.</strong> ${optText}</span>
+        `;
+        optionsContainer.appendChild(optionLabel);
+    });
+
+    document.getElementById("prev-btn").style.visibility = currentIndex === 0 ? "hidden" : "visible";
+    
+    const nextBtn = document.getElementById("next-btn");
+    if (currentIndex === total - 1) {
+        nextBtn.innerText = "Submit Exam";
+        nextBtn.className = "btn btn-submit";
+        nextBtn.onclick = submitExam;
+    } else {
+        nextBtn.innerText = "Next →";
+        nextBtn.className = "btn btn-next";
+        nextBtn.onclick = () => navigateQuestion(1);
+    }
+
+    highlightSidebar(q.sidebarId);
+}
+
+function selectOption(optionIndex) {
+    userAnswers[currentIndex] = optionIndex;
+    
+    const cards = document.querySelectorAll(".option-card");
+    cards.forEach((card, idx) => {
+        if (idx === optionIndex) {
+            card.classList.add("selected");
+        } else {
+            card.classList.remove("selected");
+        }
+    });
+}
+
+function navigateQuestion(direction) {
+    currentIndex += direction;
+    if (currentIndex < 0) currentIndex = 0;
+    if (currentIndex >= currentExam.length) currentIndex = currentExam.length - 1;
+    renderCurrentQuestion();
+}
+
+function highlightSidebar(sidebarId) {
+    document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
+    const activeEl = document.getElementById(sidebarId);
+    if (activeEl) activeEl.classList.add('active');
+}
+
+// =========================================================
+// 3. MOBILE SIDEBAR LOGIC
+// =========================================================
+
+function toggleMobileSidebar() {
+    const sidebar = document.getElementById("sidebar-drawer");
+    const overlay = document.getElementById("sidebar-overlay");
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("active");
+}
+
+function closeSidebarOnMobile() {
+    if (window.innerWidth <= 768) {
+        toggleMobileSidebar();
+    }
+}
+
+// =========================================================
+// 4. TIMER LOGIC
+// =========================================================
+
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    totalSeconds = 3 * 60 * 60;
+    const timerElement = document.getElementById('timer');
+
+    timerInterval = setInterval(() => {
+        if (totalSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerElement.textContent = "00:00:00";
+            alert("TIME IS UP");
+            submitExam();
+            return;
+        }
+
+        let hours = Math.floor(totalSeconds / 3600);
+        let minutes = Math.floor((totalSeconds % 3600) / 60);
+        let seconds = totalSeconds % 60;
+
+        timerElement.textContent = 
+            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        totalSeconds--;
+    }, 1000);
+}
+
+// =========================================================
+// 5. SUBMISSION & ANSWER REVIEW GENERATOR
+// =========================================================
+
+function submitExam() {
+    clearInterval(timerInterval);
+    let score = 0;
+
+    currentExam.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) {
+            score++;
+        }
+    });
+
+    const total = currentExam.length;
+    const percentage = (score / total) * 100;
+
+    document.getElementById("quiz-card-box").style.display = "none";
+    const resultBox = document.getElementById("result-box");
+    resultBox.style.display = "block";
+
+    document.getElementById("score-text").innerText = `${score} / ${total}`;
+    document.getElementById("percentage-text").innerText = `Percentage: ${percentage.toFixed(2)}%`;
+
+    const greetingEl = document.getElementById("greeting-message");
+
+    if (percentage >= 95) {
+        greetingEl.style.color = "#276749";
+        greetingEl.innerHTML = "<strong>Outstanding Performance! 🎉</strong><br>Excellent mastery! You demonstrate complete preparedness for the official Civil Service Examination.";
+    } else if (percentage >= 80) {
+        greetingEl.style.color = "#2b6cb0";
+        greetingEl.innerHTML = "<strong>Congratulations! You Passed! 👏</strong><br>Great job! You reached the required passing score of 80%. Keep reviewing to maintain your edge.";
+    } else if (percentage >= 70) {
+        greetingEl.style.color = "#dd6b20";
+        greetingEl.innerHTML = "<strong>So Close! Almost Passed! ⚠️</strong><br>You are near the 80% mark. Focus on reviewing your weaker topics and try taking the practice exam again.";
+    } else {
+        greetingEl.style.color = "#c53030";
+        greetingEl.innerHTML = "<strong>Needs Improvement. 📚</strong><br>Do not give up! Review the subject materials carefully and re-attempt the test to build speed and accuracy.";
+    }
+
+    renderAnswerReview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderAnswerReview() {
+    const reviewContainer = document.getElementById("review-list-container");
+    reviewContainer.innerHTML = "";
+
+    currentExam.forEach((q, idx) => {
+        const userSelectedIdx = userAnswers[idx];
+        const isCorrect = userSelectedIdx === q.correct;
+
+        const userAnsText = userSelectedIdx !== undefined ? q.options[userSelectedIdx] : "<em>No Answer Provided</em>";
+        const correctAnsText = q.options[q.correct];
+
+        let questionBody = `${idx + 1}. ${q.question}`;
+        if (q.image) {
+            questionBody += `<br><img src="${q.image}" alt="Question Figure" style="max-width:100%; max-height:250px; border-radius:6px; margin-top:10px;">`;
+        }
+
+        const cardDiv = document.createElement("div");
+        cardDiv.className = `review-card ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        cardDiv.innerHTML = `
+            <div class="review-card-header">
+                <div class="review-question-text">${questionBody}</div>
+                <span class="status-badge ${isCorrect ? 'correct' : 'incorrect'}">
+                    ${isCorrect ? '✔ Correct' : '✖ Incorrect'}
+                </span>
+            </div>
+            <div class="review-answer-line user-answer ${isCorrect ? 'right' : 'wrong'}">
+                <strong>Your Answer:</strong> ${userAnsText}
+            </div>
+            ${!isCorrect ? `
+                <div class="review-answer-line correct-answer">
+                    <strong>Correct Answer:</strong> ${correctAnsText}
+                </div>
+            ` : ''}
+        `;
+
+        reviewContainer.appendChild(cardDiv);
+    });
+}
+
+function retakeExam() {
+    currentIndex = 0;
+    userAnswers = {};
+    
+    document.getElementById("result-box").style.display = "none";
+    document.getElementById("quiz-card-box").style.display = "block";
+
+    currentExam = generate150QuestionExam();
+    renderCurrentQuestion();
+    startTimer();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Automatically start exam when window finishes loading
+window.onload = function() {
+    currentExam = generate150QuestionExam();
+    renderCurrentQuestion();
+    startTimer();
+};		// ==========================================
         // 1. QUESTION POOLS
         // ==========================================
 
@@ -1788,271 +2091,3 @@
             }
         ];
 
-        // ==========================================
-        // 2. EXAM ENGINE & STATE MANAGEMENT
-        // ==========================================
-        let currentExam = [];
-        let currentIndex = 0;
-        let userAnswers = {};
-        let totalSeconds = 3 * 60 * 60;
-        let timerInterval = null;
-
-        function getRandomSample(arr, count) {
-            let shuffled = [...arr].sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, count);
-        }
-
-        function generate150QuestionExam() {
-            const numericalQuestions = getRandomSample(numericalPool, 42);
-            const verbalQuestions = getRandomSample(verbalPool, 55);
-            const analyticalQuestions = getRandomSample(analyticalPool, 35);
-            const genInfoQuestions = getRandomSample(generalInfoPool, 18);
-
-            const combinedPool = [
-                ...numericalQuestions,
-                ...verbalQuestions,
-                ...analyticalQuestions,
-                ...genInfoQuestions
-            ];
-
-            return combinedPool.map(q => {
-                const correctAnswerText = q.options[q.correct];
-                const shuffledOptions = [...q.options].sort(() => 0.5 - Math.random());
-                const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
-
-                return {
-                    ...q,
-                    options: shuffledOptions,
-                    correct: newCorrectIndex
-                };
-            });
-        }
-
-        function renderCurrentQuestion() {
-            const q = currentExam[currentIndex];
-            const total = currentExam.length;
-
-            document.getElementById("q-counter-text").innerText = `Question ${currentIndex + 1} of ${total}`;
-            const progressPercent = ((currentIndex + 1) / total) * 100;
-            document.getElementById("progress-bar").style.width = `${progressPercent}%`;
-
-            document.getElementById("topic-badge-text").innerText = `${q.subject} — ${q.subtopic}`;
-            document.getElementById("direction-text").innerText = q.directions;
-            
-            let questionContent = `${currentIndex + 1}. ${q.question}`;
-            if (q.image) {
-                questionContent += `
-                    <div style="text-align:center; margin-top:15px;">
-                        <img src="${q.image}" alt="Question Figure" style="max-width:100%; max-height:300px; border-radius:8px; border:1px solid #cbd5e0; display:block; margin:0 auto;">
-                    </div>
-                `;
-            }
-            document.getElementById("question-text").innerHTML = questionContent;
-
-            const optionsContainer = document.getElementById("options-container");
-            optionsContainer.innerHTML = "";
-
-            q.options.forEach((optText, oIdx) => {
-                const isSelected = userAnswers[currentIndex] === oIdx;
-                const letterPrefix = String.fromCharCode(65 + oIdx);
-                const optionLabel = document.createElement("label");
-                optionLabel.className = `option-card ${isSelected ? 'selected' : ''}`;
-                
-                optionLabel.innerHTML = `
-                    <input type="radio" name="option_choice" value="${oIdx}" ${isSelected ? 'checked' : ''} onchange="selectOption(${oIdx})">
-                    <span class="option-text"><strong>${letterPrefix}.</strong> ${optText}</span>
-                `;
-                optionsContainer.appendChild(optionLabel);
-            });
-
-            document.getElementById("prev-btn").style.visibility = currentIndex === 0 ? "hidden" : "visible";
-            
-            const nextBtn = document.getElementById("next-btn");
-            if (currentIndex === total - 1) {
-                nextBtn.innerText = "Submit Exam";
-                nextBtn.className = "btn btn-submit";
-                nextBtn.onclick = submitExam;
-            } else {
-                nextBtn.innerText = "Next →";
-                nextBtn.className = "btn btn-next";
-                nextBtn.onclick = () => navigateQuestion(1);
-            }
-
-            highlightSidebar(q.sidebarId);
-        }
-
-        function selectOption(optionIndex) {
-            userAnswers[currentIndex] = optionIndex;
-            
-            const cards = document.querySelectorAll(".option-card");
-            cards.forEach((card, idx) => {
-                if (idx === optionIndex) {
-                    card.classList.add("selected");
-                } else {
-                    card.classList.remove("selected");
-                }
-            });
-        }
-
-        function navigateQuestion(direction) {
-            currentIndex += direction;
-            if (currentIndex < 0) currentIndex = 0;
-            if (currentIndex >= currentExam.length) currentIndex = currentExam.length - 1;
-            renderCurrentQuestion();
-        }
-
-        function highlightSidebar(sidebarId) {
-            document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
-            const activeEl = document.getElementById(sidebarId);
-            if (activeEl) activeEl.classList.add('active');
-        }
-
-        // ==========================================
-        // 3. MOBILE SIDEBAR LOGIC
-        // ==========================================
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById("sidebar-drawer");
-            const overlay = document.getElementById("sidebar-overlay");
-            sidebar.classList.toggle("open");
-            overlay.classList.toggle("active");
-        }
-
-        function closeSidebarOnMobile() {
-            if (window.innerWidth <= 768) {
-                toggleMobileSidebar();
-            }
-        }
-
-        // ==========================================
-        // 4. TIMER LOGIC
-        // ==========================================
-        function startTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            totalSeconds = 3 * 60 * 60;
-            const timerElement = document.getElementById('timer');
-
-            timerInterval = setInterval(() => {
-                if (totalSeconds <= 0) {
-                    clearInterval(timerInterval);
-                    timerElement.textContent = "00:00:00";
-                    alert("TIME IS UP");
-                    submitExam();
-                    return;
-                }
-
-                let hours = Math.floor(totalSeconds / 3600);
-                let minutes = Math.floor((totalSeconds % 3600) / 60);
-                let seconds = totalSeconds % 60;
-
-                timerElement.textContent = 
-                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-                totalSeconds--;
-            }, 1000);
-        }
-
-        // ==========================================
-        // 5. SUBMISSION & ANSWER REVIEW GENERATOR
-        // ==========================================
-        function submitExam() {
-            clearInterval(timerInterval);
-            let score = 0;
-
-            currentExam.forEach((q, idx) => {
-                if (userAnswers[idx] === q.correct) {
-                    score++;
-                }
-            });
-
-            const total = currentExam.length;
-            const percentage = (score / total) * 100;
-
-            document.getElementById("quiz-card-box").style.display = "none";
-            const resultBox = document.getElementById("result-box");
-            resultBox.style.display = "block";
-
-            document.getElementById("score-text").innerText = `${score} / ${total}`;
-            document.getElementById("percentage-text").innerText = `Percentage: ${percentage.toFixed(2)}%`;
-
-            const greetingEl = document.getElementById("greeting-message");
-
-            if (percentage >= 95) {
-                greetingEl.style.color = "#276749";
-                greetingEl.innerHTML = "<strong>Outstanding Performance! 🎉</strong><br>Excellent mastery! You demonstrate complete preparedness for the official Civil Service Examination.";
-            } else if (percentage >= 80) {
-                greetingEl.style.color = "#2b6cb0";
-                greetingEl.innerHTML = "<strong>Congratulations! You Passed! 👏</strong><br>Great job! You reached the required passing score of 80%. Keep reviewing to maintain your edge.";
-            } else if (percentage >= 70) {
-                greetingEl.style.color = "#dd6b20";
-                greetingEl.innerHTML = "<strong>So Close! Almost Passed! ⚠️</strong><br>You are near the 80% mark. Focus on reviewing your weaker topics and try taking the practice exam again.";
-            } else {
-                greetingEl.style.color = "#c53030";
-                greetingEl.innerHTML = "<strong>Needs Improvement. 📚</strong><br>Do not give up! Review the subject materials carefully and re-attempt the test to build speed and accuracy.";
-            }
-
-            // Render Answer Review List
-            renderAnswerReview();
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function renderAnswerReview() {
-            const reviewContainer = document.getElementById("review-list-container");
-            reviewContainer.innerHTML = "";
-
-            currentExam.forEach((q, idx) => {
-                const userSelectedIdx = userAnswers[idx];
-                const isCorrect = userSelectedIdx === q.correct;
-
-                const userAnsText = userSelectedIdx !== undefined ? q.options[userSelectedIdx] : "<em>No Answer Provided</em>";
-                const correctAnsText = q.options[q.correct];
-
-                let questionBody = `${idx + 1}. ${q.question}`;
-                if (q.image) {
-                    questionBody += `<br><img src="${q.image}" alt="Question Figure" style="max-width:100%; max-height:250px; border-radius:6px; margin-top:10px;">`;
-                }
-
-                const cardDiv = document.createElement("div");
-                cardDiv.className = `review-card ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
-
-                cardDiv.innerHTML = `
-                    <div class="review-card-header">
-                        <div class="review-question-text">${questionBody}</div>
-                        <span class="status-badge ${isCorrect ? 'correct' : 'incorrect'}">
-                            ${isCorrect ? '✔ Correct' : '✖ Incorrect'}
-                        </span>
-                    </div>
-                    <div class="review-answer-line user-answer ${isCorrect ? 'right' : 'wrong'}">
-                        <strong>Your Answer:</strong> ${userAnsText}
-                    </div>
-                    ${!isCorrect ? `
-                        <div class="review-answer-line correct-answer">
-                            <strong>Correct Answer:</strong> ${correctAnsText}
-                        </div>
-                    ` : ''}
-                `;
-
-                reviewContainer.appendChild(cardDiv);
-            });
-        }
-
-        function retakeExam() {
-            currentIndex = 0;
-            userAnswers = {};
-            
-            document.getElementById("result-box").style.display = "none";
-            document.getElementById("quiz-card-box").style.display = "block";
-
-            currentExam = generate150QuestionExam();
-            renderCurrentQuestion();
-            startTimer();
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Initialize Exam
-        window.onload = function() {
-            currentExam = generate150QuestionExam();
-            renderCurrentQuestion();
-            startTimer();
-        };
